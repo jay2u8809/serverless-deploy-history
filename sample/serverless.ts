@@ -11,8 +11,11 @@ const serverlessConfiguration: AWS = {
   },
   custom: {
     'serverless-deploy-history': {
+      stage: [   // optional(default: all stages)
+        'production'
+      ],
       slack: {
-        url: 'https://hooks.slack.com/services/~', // webhook url
+        webhook: 'https://hooks.slack.com/services/~', // webhook url
         title: 'Deployment Notifications', // default: Deployment History Notification
       },
     },

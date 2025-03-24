@@ -23,10 +23,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rm -rf dist && tsc --project tsconfig.build.json",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.29.0",
+    "@types/jest": "^29.5.12",
     "@types/node": "^16.0.0",
     "@types/serverless": "^3.12.15",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
@@ -34,7 +36,9 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^29.7.0",
     "prettier": "^2.3.2",
+    "ts-jest": "^29.1.5",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "4.1.0",
@@ -47,12 +51,16 @@
       "ts"
     ],
     "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
     "testEnvironment": "node"
   },
   "dependencies": {
-    "axios": "^1.6.8"
+    "axios": "^1.7.2"
   }
 }

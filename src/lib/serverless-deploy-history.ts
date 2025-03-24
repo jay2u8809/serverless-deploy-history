@@ -21,7 +21,7 @@ export class ServerlessDeployHistory {
   }
 
   async afterDeploy() {
-    const result = await this.runner.exec();
+    const result = await this.runner.run();
     console.assert(result, 'Fail to send deployment history');
   }
 }

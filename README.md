@@ -31,6 +31,7 @@ $ yarn add -D serverless-deploy-history
 ## Usage
 ### Sample: slack webhook
 #### serverless.yaml
+- [View Sample](./sample/serverless.yaml)
 - Plugin
 ```yaml
 plugins:
@@ -41,12 +42,15 @@ plugins:
 ```yaml
 custom:
   serverlessDeployHistory:
+    stage: # optional(default: all stages)
+      - production
     slack:
       webhook: 'https://hooks.slack.com/services/~'
       title: 'Sample Deploy History'
 ```
 
 #### serverless.ts
+- [View Sample](./sample/serverless.ts)
 - Plugin
 ```typescript
 plugins: [
@@ -59,6 +63,9 @@ plugins: [
 ```typescript
 custom: {
   serverlessDeployHistory: {
+      stage: [   // optional(default: all stages)
+        'production'
+      ],
       slack: {
         webhook: 'https://hooks.slack.com/services/~',
         title: 'Sample Deploy History'
