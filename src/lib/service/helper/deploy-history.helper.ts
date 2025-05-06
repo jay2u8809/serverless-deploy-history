@@ -6,7 +6,7 @@ const TAG = 'DeployHistoryHelper';
 
 const execGitPrintCommand = async (command: string): Promise<string | null> => {
   try {
-    const exec: string = childProcess.execSync(command, {
+    const exec = childProcess.execSync(command, {
       encoding: 'utf8',
     });
     // remove new-line character
@@ -27,6 +27,7 @@ const generateDeployHistoryDto = async (
     execGitPrintCommand(Config.GitCommand.REVISION),
   ]);
   const now = new Date();
+  // return
   return {
     name: name,
     stage: stage || 'dev',

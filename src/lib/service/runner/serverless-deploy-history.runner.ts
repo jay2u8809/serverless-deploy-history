@@ -12,7 +12,7 @@ export class ServerlessDeployHistoryRunner {
   ) {}
 
   async exec(): Promise<boolean> {
-    const dto: DeployInfoDto = await this.initDeployHistoryDto();
+    const dto = await this.initDeployHistoryDto();
     return this.sendNotification(dto);
   }
 

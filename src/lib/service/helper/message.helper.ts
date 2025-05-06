@@ -1,16 +1,16 @@
 import axios from 'axios';
 import { DeployInfoDto } from 'src/lib/interface/serverless-deploy-history.dto';
-import { AxiosRequestConfig } from 'axios';
 
 const sendSlackMessage = async (url: string, data: any): Promise<boolean> => {
   try {
     // send slack message
-    const config: AxiosRequestConfig = {
+    const config = {
       headers: {
         'Content-Type': 'application/json',
       },
     };
     const response = await axios.post(url, data, config);
+    // return
     return response.data === 'ok';
   } catch (err) {
     console.error('fail-send-slack', err.message);
@@ -27,6 +27,7 @@ const makeRichMessageTemplate = (dto: DeployInfoDto, title: string): object => {
     .set('end_at', dto.endAt)
     .set('local_end_at', dto.localEndAt)
     .set('user', dto.userName);
+  // return
   return {
     blocks: [
       {
