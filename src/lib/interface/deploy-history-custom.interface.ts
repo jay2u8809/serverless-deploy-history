@@ -1,6 +1,10 @@
 export interface DeployHistoryCustom {
-  slack: {
+  slack?: {
     webhook: string;
-    title: string;
+    title?: string;
+  };
+  discord?: {
+    webhook: string;
+    title?: string;
   };
 }

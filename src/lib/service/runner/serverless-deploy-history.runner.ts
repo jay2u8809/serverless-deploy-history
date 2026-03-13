@@ -3,7 +3,8 @@ import { DeployInfoDto } from '../../interface/serverless-deploy-history.dto';
 import { DeployHistoryCustom } from '../../interface/deploy-history-custom.interface';
 import { Config } from '../../interface/deploy-history.config';
 import { DeployHistoryHelper } from '../helper/deploy-history.helper';
-import { MessageHelper } from '../helper/message.helper';
+import { SlackNotification } from '../notification/slack.notification';
+import { DiscordNotification } from '../notification/discord.notification';
 
 export class ServerlessDeployHistoryRunner {
   constructor(
@@ -19,22 +20,35 @@ export class ServerlessDeployHistoryRunner {
   // === private ===
   private async sendNotification(dto: DeployInfoDto): Promise<boolean> {
     const custom = this.getSlsCustomInfo();
-    const url = custom.slack.webhook;
+    const tasks: Promise<boolean>[] = [];
 
-    if (!url) {
+    if (custom.slack?.webhook) {
+      tasks.push(
+        SlackNotification.send(dto, {
+          webhook: custom.slack.webhook,
+          title: custom.slack.title || Config.Slack.title,
+        }),
+      );
+    }
+
+    if (custom.discord?.webhook) {
+      tasks.push(
+        DiscordNotification.send(dto, {
+          webhook: custom.discord.webhook,
+          title: custom.discord.title || Config.Slack.title,
+        }),
+      );
+    }
+
+    if (tasks.length === 0) {
       console.error(
-        'serverless-deploy-history: slack.webhook is not configured',
+        'serverless-deploy-history: no webhook is configured (slack or discord)',
       );
       return false;
     }
 
-    // make rich message
-    const data = MessageHelper.makeRichMessageTemplate(
-      dto,
-      custom.slack.title || Config.Slack.title,
-    );
-    // send slack message
-    return MessageHelper.sendSlackMessage(url, data);
+    const results = await Promise.all(tasks);
+    return results.every(Boolean);
   }
 
   private initDeployHistoryDto(): DeployInfoDto {
@@ -45,8 +59,10 @@ export class ServerlessDeployHistoryRunner {
   }
 
   private getSlsCustomInfo(): DeployHistoryCustom {
-    const custom = this.serverless.service.custom?.[Config.Title] as DeployHistoryCustom;
-    if (!custom?.slack) {
+    const custom = this.serverless.service.custom?.[
+      Config.Title
+    ] as DeployHistoryCustom;
+    if (!custom?.slack && !custom?.discord) {
       throw new Error(
         'serverless-deploy-history: configuration is missing in serverless.yml',
       );
