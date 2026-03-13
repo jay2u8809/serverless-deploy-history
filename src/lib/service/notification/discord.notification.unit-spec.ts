@@ -45,9 +45,14 @@ describe('discord notification unit test', () => {
     it('OK: request body contains embeds with stage and title', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({ status: 204 });
 
-      await DiscordNotification.send(dto, { webhook: VALID_WEBHOOK, title: 'my-title' });
+      await DiscordNotification.send(dto, {
+        webhook: VALID_WEBHOOK,
+        title: 'my-title',
+      });
 
-      const body = JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body);
+      const body = JSON.parse(
+        (global.fetch as jest.Mock).mock.calls[0][1].body,
+      );
       console.debug(TAG, 'body', JSON.stringify(body, null, 2));
 
       expect(body).toHaveProperty('embeds');
@@ -60,7 +65,9 @@ describe('discord notification unit test', () => {
     it('OK: sends message without title', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({ status: 204 });
 
-      const result = await DiscordNotification.send(dto, { webhook: VALID_WEBHOOK });
+      const result = await DiscordNotification.send(dto, {
+        webhook: VALID_WEBHOOK,
+      });
       console.debug(TAG, 'result (no title)', result);
 
       expect(result).toBe(true);
@@ -98,12 +105,15 @@ describe('discord notification unit test', () => {
       '',
     ];
 
-    it.each(invalidUrls)('FAIL: returns false for invalid url "%s"', async (url) => {
-      const result = await DiscordNotification.send(dto, { webhook: url });
-      console.debug(TAG, 'invalid url result', url, result);
+    it.each(invalidUrls)(
+      'FAIL: returns false for invalid url "%s"',
+      async (url) => {
+        const result = await DiscordNotification.send(dto, { webhook: url });
+        console.debug(TAG, 'invalid url result', url, result);
 
-      expect(global.fetch).not.toHaveBeenCalled();
-      expect(result).toBe(false);
-    });
+        expect(global.fetch).not.toHaveBeenCalled();
+        expect(result).toBe(false);
+      },
+    );
   });
 });

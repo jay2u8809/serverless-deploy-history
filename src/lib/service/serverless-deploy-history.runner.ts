@@ -1,10 +1,10 @@
 import Serverless from 'serverless';
-import { DeployInfoDto } from '../../interface/serverless-deploy-history.dto';
-import { DeployHistoryCustom } from '../../interface/deploy-history-custom.interface';
-import { Config } from '../../interface/deploy-history.config';
-import { DeployHistoryHelper } from '../helper/deploy-history.helper';
-import { SlackNotification } from '../notification/slack.notification';
-import { DiscordNotification } from '../notification/discord.notification';
+import { DeployInfoDto } from '../interface/serverless-deploy-history.dto';
+import { DeployHistoryCustom } from '../interface/deploy-history-custom.interface';
+import { Config } from '../config/deploy-history.config';
+import { DeployHistoryHelper } from './helper/deploy-history.helper';
+import { SlackNotification } from './notification/slack.notification';
+import { DiscordNotification } from './notification/discord.notification';
 
 export class ServerlessDeployHistoryRunner {
   constructor(

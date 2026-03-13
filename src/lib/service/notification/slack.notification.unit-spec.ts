@@ -49,9 +49,14 @@ describe('slack notification unit test', () => {
         text: async () => 'ok',
       });
 
-      await SlackNotification.send(dto, { webhook: VALID_WEBHOOK, title: 'my-title' });
+      await SlackNotification.send(dto, {
+        webhook: VALID_WEBHOOK,
+        title: 'my-title',
+      });
 
-      const body = JSON.parse((global.fetch as jest.Mock).mock.calls[0][1].body);
+      const body = JSON.parse(
+        (global.fetch as jest.Mock).mock.calls[0][1].body,
+      );
       console.debug(TAG, 'body', JSON.stringify(body, null, 2));
 
       expect(body).toHaveProperty('blocks');
@@ -65,7 +70,9 @@ describe('slack notification unit test', () => {
         text: async () => 'ok',
       });
 
-      const result = await SlackNotification.send(dto, { webhook: VALID_WEBHOOK });
+      const result = await SlackNotification.send(dto, {
+        webhook: VALID_WEBHOOK,
+      });
       console.debug(TAG, 'result (no title)', result);
 
       expect(result).toBe(true);
@@ -100,17 +107,20 @@ describe('slack notification unit test', () => {
     const invalidUrls = [
       'https://invalid.com/webhook',
       'http://hooks.slack.com/services/T000/B000/token', // http not https
-      'https://hooks.slack.com/other/T000/B000/token',  // wrong path
+      'https://hooks.slack.com/other/T000/B000/token', // wrong path
       'not-a-url',
       '',
     ];
 
-    it.each(invalidUrls)('FAIL: returns false for invalid url "%s"', async (url) => {
-      const result = await SlackNotification.send(dto, { webhook: url });
-      console.debug(TAG, 'invalid url result', url, result);
+    it.each(invalidUrls)(
+      'FAIL: returns false for invalid url "%s"',
+      async (url) => {
+        const result = await SlackNotification.send(dto, { webhook: url });
+        console.debug(TAG, 'invalid url result', url, result);
 
-      expect(global.fetch).not.toHaveBeenCalled();
-      expect(result).toBe(false);
-    });
+        expect(global.fetch).not.toHaveBeenCalled();
+        expect(result).toBe(false);
+      },
+    );
   });
 });

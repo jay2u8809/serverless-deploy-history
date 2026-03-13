@@ -1,6 +1,6 @@
 import * as childProcess from 'node:child_process';
 import { DeployHistoryHelper } from './deploy-history.helper';
-import { Config } from '../../interface/deploy-history.config';
+import { Config } from '../../config/deploy-history.config';
 
 jest.mock('node:child_process');
 
@@ -15,7 +15,9 @@ describe('deploy history helper unit test', () => {
     it('OK: returns trimmed string on success', () => {
       (childProcess.execSync as jest.Mock).mockReturnValue('main\n');
 
-      const result = DeployHistoryHelper.execGitPrintCommand('git branch --show-current');
+      const result = DeployHistoryHelper.execGitPrintCommand(
+        'git branch --show-current',
+      );
       console.debug(TAG, result);
 
       expect(result).toBe('main');
@@ -24,7 +26,9 @@ describe('deploy history helper unit test', () => {
     it('OK: returns empty string when command outputs nothing (detached HEAD)', () => {
       (childProcess.execSync as jest.Mock).mockReturnValue('\n');
 
-      const result = DeployHistoryHelper.execGitPrintCommand('git branch --show-current');
+      const result = DeployHistoryHelper.execGitPrintCommand(
+        'git branch --show-current',
+      );
       console.debug(TAG, result);
 
       // detached HEAD 상태에서는 빈 문자열('')이 반환되며, null이 아니어야 함
@@ -37,7 +41,9 @@ describe('deploy history helper unit test', () => {
         throw new Error('not a git repository');
       });
 
-      const result = DeployHistoryHelper.execGitPrintCommand('git branch --show-current');
+      const result = DeployHistoryHelper.execGitPrintCommand(
+        'git branch --show-current',
+      );
       console.debug(TAG, result);
 
       expect(result).toBeNull();
@@ -61,7 +67,10 @@ describe('deploy history helper unit test', () => {
     it('OK: uses given stage when provided', () => {
       (childProcess.execSync as jest.Mock).mockReturnValue('value\n');
 
-      const result = DeployHistoryHelper.generateDeployHistoryDto('my-service', 'prod');
+      const result = DeployHistoryHelper.generateDeployHistoryDto(
+        'my-service',
+        'prod',
+      );
       console.debug(TAG, result);
 
       expect(result.stage).toBe('prod');
