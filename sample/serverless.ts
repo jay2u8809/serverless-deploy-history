@@ -10,11 +10,25 @@ const serverlessConfiguration: AWS = {
     region: 'ap-northeast-1',
   },
   custom: {
-    'serverless-deploy-history': {
+    serverlessDeployHistory: {
       slack: {
         webhook: 'https://hooks.slack.com/services/~', // webhook url
         title: 'Deployment Notifications', // default: Deployment History Notification
       },
+      // using SSM Parameter Store
+      // slack: {
+      //   webhook: '${ssm:/your/ssm/parameter/path}', // SSM parameter path
+      //   title: 'Deployment Notifications',
+      // },
+      discord: {
+        webhook: 'https://discord.com/api/webhooks/~', // webhook url
+        title: 'Deployment Notifications', // default: Deployment History Notification
+      },
+      // using SSM Parameter Store
+      // discord: {
+      //   webhook: '${ssm:/your/ssm/parameter/path}', // SSM parameter path
+      //   title: 'Deployment Notifications',
+      // },
     },
   },
   functions: {
