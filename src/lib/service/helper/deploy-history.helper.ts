@@ -1,6 +1,6 @@
 import * as childProcess from 'node:child_process';
 import { DeployInfoDto } from '../../interface/serverless-deploy-history.dto';
-import { Config } from '../../interface/deploy-history.config';
+import { Config } from '../../config/deploy-history.config';
 
 const TAG = 'DeployHistoryHelper';
 

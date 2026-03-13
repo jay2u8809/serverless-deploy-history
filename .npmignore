@@ -1,6 +1,9 @@
 sample/
 src/
+coverage/
 .node-version
+.gitignore
+.eslintrc.js
 tsconfig.json
 tsconfig.build.json
 package-lock.json

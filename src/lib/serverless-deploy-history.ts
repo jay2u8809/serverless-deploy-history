@@ -1,5 +1,5 @@
 import Serverless from 'serverless';
-import { ServerlessDeployHistoryRunner } from './service/runner/serverless-deploy-history.runner';
+import { ServerlessDeployHistoryRunner } from './service/serverless-deploy-history.runner';
 
 type Hooks = { [key: string]: () => void };
 
