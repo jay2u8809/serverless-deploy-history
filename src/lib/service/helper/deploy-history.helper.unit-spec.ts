@@ -1,50 +1,83 @@
+import * as childProcess from 'node:child_process';
 import { DeployHistoryHelper } from './deploy-history.helper';
+import { Config } from '../../interface/deploy-history.config';
+
+jest.mock('node:child_process');
 
 const TAG = 'DeployHistoryHelperUnitTest';
 
 describe('deploy history helper unit test', () => {
-  describe('execCommand', () => {
-    it('OK: get git user name', () => {
-      const command = 'git config user.name';
-      const result = DeployHistoryHelper.execGitPrintCommand(command);
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  describe('execGitPrintCommand', () => {
+    it('OK: returns trimmed string on success', () => {
+      (childProcess.execSync as jest.Mock).mockReturnValue('main\n');
+
+      const result = DeployHistoryHelper.execGitPrintCommand('git branch --show-current');
       console.debug(TAG, result);
 
-      expect(result).not.toBeNull();
+      expect(result).toBe('main');
     });
 
-    it('OK: get current branch name', () => {
-      const command = 'git branch --show-current';
-      const result = DeployHistoryHelper.execGitPrintCommand(command);
+    it('OK: returns empty string when command outputs nothing (detached HEAD)', () => {
+      (childProcess.execSync as jest.Mock).mockReturnValue('\n');
+
+      const result = DeployHistoryHelper.execGitPrintCommand('git branch --show-current');
       console.debug(TAG, result);
 
       // detached HEAD 상태에서는 빈 문자열('')이 반환되며, null이 아니어야 함
       expect(result).not.toBeNull();
+      expect(result).toBe('');
     });
 
-    it('OK: get git revision', () => {
-      const command = 'git rev-parse HEAD';
-      const result = DeployHistoryHelper.execGitPrintCommand(command);
+    it('FAIL: returns null when command throws', () => {
+      (childProcess.execSync as jest.Mock).mockImplementation(() => {
+        throw new Error('not a git repository');
+      });
+
+      const result = DeployHistoryHelper.execGitPrintCommand('git branch --show-current');
       console.debug(TAG, result);
 
-      expect(result).not.toBeNull();
+      expect(result).toBeNull();
     });
   });
 
   describe('generateDeployHistoryDto', () => {
-    it('OK', () => {
-      const name = 'dev.ian';
+    it('OK: returns dto with correct name and default stage', () => {
+      (childProcess.execSync as jest.Mock).mockReturnValue('value\n');
+
+      const name = 'my-service';
       const result = DeployHistoryHelper.generateDeployHistoryDto(name);
       console.debug(TAG, result);
 
-      expect(result).toBeDefined();
-      expect(result).toHaveProperty('name');
-      expect(result).toHaveProperty('stage');
+      expect(result.name).toBe(name);
+      expect(result.stage).toBe('dev');
       expect(result).toHaveProperty('endAt');
       expect(result).toHaveProperty('localEndAt');
-      expect(result).toHaveProperty('userName');
-      expect(result).toHaveProperty('branch');
-      expect(result).toHaveProperty('revision');
-      expect(result.name).toEqual(name);
+    });
+
+    it('OK: uses given stage when provided', () => {
+      (childProcess.execSync as jest.Mock).mockReturnValue('value\n');
+
+      const result = DeployHistoryHelper.generateDeployHistoryDto('my-service', 'prod');
+      console.debug(TAG, result);
+
+      expect(result.stage).toBe('prod');
+    });
+
+    it('OK: uses fallback values when git commands fail', () => {
+      (childProcess.execSync as jest.Mock).mockImplementation(() => {
+        throw new Error('not a git repository');
+      });
+
+      const result = DeployHistoryHelper.generateDeployHistoryDto('my-service');
+      console.debug(TAG, result);
+
+      expect(result.userName).toBe(Config.Fallback.USER_NAME);
+      expect(result.branch).toBe(Config.Fallback.BRANCH_NAME);
+      expect(result.revision).toBe(Config.Fallback.REVISION);
     });
   });
 });
