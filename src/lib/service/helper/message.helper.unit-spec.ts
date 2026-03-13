@@ -27,13 +27,13 @@ describe('deploy history helper unit test', () => {
   describe('makeRichMessageTemplate', () => {
     let dto: DeployInfoDto;
 
-    beforeEach(async () => {
-      dto = await DeployHistoryHelper.generateDeployHistoryDto('fake-service');
+    beforeEach(() => {
+      dto = DeployHistoryHelper.generateDeployHistoryDto('fake-service');
       console.debug(TAG, 'dto', dto);
     });
 
-    it('OK', async () => {
-      const result = await MessageHelper.makeRichMessageTemplate(
+    it('OK', () => {
+      const result = MessageHelper.makeRichMessageTemplate(
         dto,
         'fake-titil',
       );

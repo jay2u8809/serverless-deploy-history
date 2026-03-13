@@ -45,6 +45,12 @@ export class ServerlessDeployHistoryRunner {
   }
 
   private getSlsCustomInfo(): DeployHistoryCustom {
-    return this.serverless.service.custom[Config.Title] as DeployHistoryCustom;
+    const custom = this.serverless.service.custom?.[Config.Title] as DeployHistoryCustom;
+    if (!custom?.slack) {
+      throw new Error(
+        'serverless-deploy-history: configuration is missing in serverless.yml',
+      );
+    }
+    return custom;
   }
 }

@@ -7,8 +7,7 @@ const TAG = 'DeployHistoryHelper';
 const execGitPrintCommand = (command: string): string | null => {
   try {
     const result = childProcess.execSync(command, { encoding: 'utf8' });
-    // remove new-line character
-    return [...result].filter((c) => c !== '\n').join('');
+    return result.trim();
   } catch (err) {
     console.error(TAG, 'command-exec-error', command);
     return null;
@@ -28,9 +27,9 @@ const generateDeployHistoryDto = (
     stage: stage || 'dev',
     endAt: now.toISOString(),
     localEndAt: now.toLocaleString(),
-    userName: userName || 'NoUserName',
-    branch: branch || 'NoBranchName',
-    revision: revision || 'NoRevision',
+    userName: userName || Config.Fallback.USER_NAME,
+    branch: branch || Config.Fallback.BRANCH_NAME,
+    revision: revision || Config.Fallback.REVISION,
   };
 };
 

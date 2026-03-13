@@ -19,15 +19,19 @@ const sendSlackMessage = async (url: string, data: any): Promise<boolean> => {
 };
 
 const makeRichMessageTemplate = (dto: DeployInfoDto, title: string): object => {
-  const map = new Map<string, string>()
-    .set('name', dto.name)
-    .set('stage', dto.stage)
-    .set('branch', dto.branch)
-    .set('revision', dto.revision)
-    .set('end_at', dto.endAt)
-    .set('local_end_at', dto.localEndAt)
-    .set('user', dto.userName);
-  // return
+  const fields = [
+    ['name', dto.name],
+    ['stage', dto.stage],
+    ['branch', dto.branch],
+    ['revision', dto.revision],
+    ['end_at', dto.endAt],
+    ['local_end_at', dto.localEndAt],
+    ['user', dto.userName],
+  ].map(([key, value]) => ({
+    type: 'mrkdwn',
+    text: `*${key.toUpperCase()}: *\n ${value}`,
+  }));
+
   return {
     blocks: [
       {
@@ -39,12 +43,7 @@ const makeRichMessageTemplate = (dto: DeployInfoDto, title: string): object => {
       },
       {
         type: 'section',
-        fields: [...map.entries()].map((item: [string, string]) => {
-          return {
-            type: 'mrkdwn',
-            text: `*${item[0].toUpperCase()}: *\n ${item[1]}`,
-          };
-        }),
+        fields,
       },
     ],
   };
