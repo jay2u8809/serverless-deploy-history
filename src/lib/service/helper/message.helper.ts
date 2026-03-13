@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DeployInfoDto } from 'src/lib/interface/serverless-deploy-history.dto';
+import { DeployInfoDto } from '../../interface/serverless-deploy-history.dto';
 
 const sendSlackMessage = async (url: string, data: any): Promise<boolean> => {
   try {

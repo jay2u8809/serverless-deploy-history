@@ -4,35 +4,36 @@ const TAG = 'DeployHistoryHelperUnitTest';
 
 describe('deploy history helper unit test', () => {
   describe('execCommand', () => {
-    it('OK: get git user name', async () => {
+    it('OK: get git user name', () => {
       const command = 'git config user.name';
-      const result = await DeployHistoryHelper.execGitPrintCommand(command);
+      const result = DeployHistoryHelper.execGitPrintCommand(command);
       console.debug(TAG, result);
 
-      expect(result).toBeDefined();
+      expect(result).not.toBeNull();
     });
 
-    it('OK: get current branch name', async () => {
+    it('OK: get current branch name', () => {
       const command = 'git branch --show-current';
-      const result = await DeployHistoryHelper.execGitPrintCommand(command);
+      const result = DeployHistoryHelper.execGitPrintCommand(command);
       console.debug(TAG, result);
 
-      expect(result).toBeDefined();
+      // detached HEAD 상태에서는 빈 문자열('')이 반환되며, null이 아니어야 함
+      expect(result).not.toBeNull();
     });
 
-    it('OK: get git revision', async () => {
+    it('OK: get git revision', () => {
       const command = 'git rev-parse HEAD';
-      const result = await DeployHistoryHelper.execGitPrintCommand(command);
+      const result = DeployHistoryHelper.execGitPrintCommand(command);
       console.debug(TAG, result);
 
-      expect(result).toBeDefined();
+      expect(result).not.toBeNull();
     });
   });
 
   describe('generateDeployHistoryDto', () => {
-    it('OK', async () => {
+    it('OK', () => {
       const name = 'dev.ian';
-      const result = await DeployHistoryHelper.generateDeployHistoryDto(name);
+      const result = DeployHistoryHelper.generateDeployHistoryDto(name);
       console.debug(TAG, result);
 
       expect(result).toBeDefined();

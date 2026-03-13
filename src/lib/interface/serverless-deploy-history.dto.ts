@@ -1,4 +1,4 @@
-export class DeployInfoDto {
+export interface DeployInfoDto {
   name: string; // required: sls service name
   stage: string; // required: sls stage name
   userName?: string; // git user name

@@ -12,25 +12,32 @@ export class ServerlessDeployHistoryRunner {
   ) {}
 
   async exec(): Promise<boolean> {
-    const dto = await this.initDeployHistoryDto();
+    const dto = this.initDeployHistoryDto();
     return this.sendNotification(dto);
   }
 
   // === private ===
   private async sendNotification(dto: DeployInfoDto): Promise<boolean> {
-    // slack webhook url
-    const url = this.getSlsCustomInfo().slack.webhook;
+    const custom = this.getSlsCustomInfo();
+    const url = custom.slack.webhook;
+
+    if (!url) {
+      console.error(
+        'serverless-deploy-history: slack.webhook is not configured',
+      );
+      return false;
+    }
 
     // make rich message
     const data = MessageHelper.makeRichMessageTemplate(
       dto,
-      this.getSlsCustomInfo().slack.title || Config.Slack.title,
+      custom.slack.title || Config.Slack.title,
     );
     // send slack message
     return MessageHelper.sendSlackMessage(url, data);
   }
 
-  private async initDeployHistoryDto(): Promise<DeployInfoDto> {
+  private initDeployHistoryDto(): DeployInfoDto {
     return DeployHistoryHelper.generateDeployHistoryDto(
       this.serverless.service.service,
       this.options.stage,
