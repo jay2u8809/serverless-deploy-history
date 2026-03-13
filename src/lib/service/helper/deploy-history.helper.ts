@@ -1,45 +1,39 @@
 import * as childProcess from 'node:child_process';
-import { ChildProcess } from 'node:child_process';
-import { ServerlessDeployHistoryDto } from '../../interface/serverless-deploy-history.dto';
+import { DeployInfoDto } from '../../interface/serverless-deploy-history.dto';
 import { Config } from '../../interface/deploy-history.config';
 
-export class DeployHistoryHelper {
-  async execCommand(command: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const result: ChildProcess = childProcess.exec(command, {
-        encoding: 'utf8',
-      });
-      result.stdout
-        .on('error', (err: Error) => {
-          console.error('command-exec-error', command, err);
-          reject(undefined);
-        })
-        .on('data', (data: string) => {
-          // remove new-line character
-          const result: string = [...data].filter((c) => c !== '\n').join('');
-          resolve(result);
-        });
-    });
-  }
+const TAG = 'DeployHistoryHelper';
 
-  async generateDeployHistoryDto(
-    name: string,
-    stage?: string,
-  ): Promise<ServerlessDeployHistoryDto> {
-    const [userName, branch, revision]: string[] = await Promise.all([
-      this.execCommand(Config.GitCommand.USER_NAME),
-      this.execCommand(Config.GitCommand.BRANCH_NAME),
-      this.execCommand(Config.GitCommand.REVISION),
-    ]);
-    const now = new Date();
-    return {
-      name: name,
-      stage: stage || 'dev',
-      endAt: now.toISOString(),
-      localEndAt: now.toLocaleString(),
-      userName,
-      branch,
-      revision,
-    } as ServerlessDeployHistoryDto;
+const execGitPrintCommand = (command: string): string | null => {
+  try {
+    const result = childProcess.execSync(command, { encoding: 'utf8' });
+    return result.trim();
+  } catch (err) {
+    console.error(TAG, 'command-exec-error', command);
+    return null;
   }
-}
+};
+
+const generateDeployHistoryDto = (
+  name: string,
+  stage?: string,
+): DeployInfoDto => {
+  const userName = execGitPrintCommand(Config.GitCommand.USER_NAME);
+  const branch = execGitPrintCommand(Config.GitCommand.BRANCH_NAME);
+  const revision = execGitPrintCommand(Config.GitCommand.REVISION);
+  const now = new Date();
+  return {
+    name: name,
+    stage: stage || 'dev',
+    endAt: now.toISOString(),
+    localEndAt: now.toLocaleString(),
+    userName: userName || Config.Fallback.USER_NAME,
+    branch: branch || Config.Fallback.BRANCH_NAME,
+    revision: revision || Config.Fallback.REVISION,
+  };
+};
+
+export const DeployHistoryHelper = {
+  execGitPrintCommand,
+  generateDeployHistoryDto,
+};

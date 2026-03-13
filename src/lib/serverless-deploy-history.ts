@@ -1,10 +1,10 @@
 import Serverless from 'serverless';
-import { ServerlessDeployHistoryDto } from './interface/serverless-deploy-history.dto';
 import { ServerlessDeployHistoryRunner } from './service/runner/serverless-deploy-history.runner';
 
+type Hooks = { [key: string]: () => void };
+
 export class ServerlessDeployHistory {
-  hooks: { [key: string]: () => void };
-  dto: ServerlessDeployHistoryDto;
+  hooks: Hooks;
   runner: ServerlessDeployHistoryRunner;
 
   constructor(
@@ -21,7 +21,17 @@ export class ServerlessDeployHistory {
   }
 
   async afterDeploy() {
-    const result = await this.runner.exec();
-    console.assert(result, 'Fail to send deployment history');
+    try {
+      const result = await this.runner.exec();
+      if (!result) {
+        console.warn(
+          'serverless-deploy-history: 배포 히스토리 전송에 실패했습니다.',
+        );
+      }
+    } catch (err) {
+      console.warn(
+        `serverless-deploy-history: 배포 히스토리 전송에 실패했습니다. (${err.message})`,
+      );
+    }
   }
 }

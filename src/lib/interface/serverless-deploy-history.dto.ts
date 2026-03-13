@@ -1,9 +1,9 @@
-export class ServerlessDeployHistoryDto {
-  name: string;
-  stage: string;
-  userName?: string;
-  revision?: string;
-  branch?: string;
-  endAt?: string;
-  localEndAt?: string;
+export interface DeployInfoDto {
+  name: string; // required: sls service name
+  stage: string; // required: sls stage name
+  userName?: string; // git user name
+  revision?: string; // git revision
+  branch?: string; // git branch name
+  endAt?: string; // deployment end time
+  localEndAt?: string; // deployment end time (local)
 }
