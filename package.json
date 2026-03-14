@@ -2,7 +2,7 @@
   "name": "serverless-deploy-history",
   "version": "0.0.3",
   "description": "Create various types of history when deploying with serverless framework",
-  "author": "jian",
+  "author": "onejay",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -25,7 +25,8 @@
     "build": "rm -rf dist && tsc --project tsconfig.build.json",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
-    "test:unit": "jest --config ./test/jest-unit.json"
+    "test:unit": "jest --config ./test/jest-unit.json",
+    "prepublish": "npm run test:unit && npm run build"
   },
   "devDependencies": {
     "@serverless/typescript": "^3.29.0",
