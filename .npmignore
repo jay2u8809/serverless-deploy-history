@@ -1,9 +1,12 @@
 sample/
 src/
+test/
 coverage/
+.idea/
 .node-version
 .gitignore
 .eslintrc.js
+.prettierrc
 tsconfig.json
 tsconfig.build.json
 package-lock.json
