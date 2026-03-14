@@ -1,6 +1,6 @@
 {
   "name": "serverless-deploy-history",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A Serverless Framework plugin that sends deployment notifications via Slack and Discord webhook",
   "author": "onejay",
   "license": "MIT",
