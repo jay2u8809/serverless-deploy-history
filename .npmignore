@@ -10,3 +10,7 @@ coverage/
 tsconfig.json
 tsconfig.build.json
 package-lock.json
+CLAUDE.md
+.claude/
+AGENTS.md
+.codex
